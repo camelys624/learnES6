@@ -178,9 +178,42 @@ const atom = {
   value: 1,
   addValue: function (value) {
     return atom.value + value;
-  }
+  },
 };
 
 // good
-
+const atom = {
+  ref,
+  value: 1,
+  addValue(value) {
+    return atom.value + value;
+  },
+};
 ```
+
+---------------------
+
+### 5. 数组
+使用扩展运算符(...)拷贝数组。
+
+``` js
+// bad
+const len = items.length;
+const itemsCopy = [];
+let i;
+for (i = 0; i < len; i++){
+  itemsCopy[i] = items[i];
+}
+
+// good
+const itemsCopy = [...items];
+```
+
+**使用Array.from**方法，将类似数组的对象转为数组。
+
+``` js
+const foo = document.querySelectorAll('.foo');
+const nodes = Array.from(foo);
+```
+
+--------------------
