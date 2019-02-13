@@ -213,7 +213,7 @@ new Foo.getName();  // -> 1
 new Foo().getName();  // -> 2
 ```
 
-![precefence](./static/img/precefence.png)
+![precedence](./static/img/precedence.png)
 
 从上图可以看出，`new Foo()` 的优先级大于 `new Foo`,所以对于上述代码来说可以这样划分执行顺序
 
@@ -509,4 +509,21 @@ let a = {
 let b = a
 a.age = 2
 console.log(b.age); // 2
+```
+
+从上述例子中我们可以发现，如果一个变量赋值一个对象，那么两者的值会是同一个引用，其中一方改变，另一方也会相应改变。
+
+通常在开发中我们不希望出现这样的问题，我们可以使用浅拷贝来解决这个问题。
+
+### 浅拷贝
+
+首先可以通过 `Object.assign` 来解决这个问题。
+
+```js
+let a = {
+  age: 1
+}
+let b = Object.assign({}, a)
+a.age = 2
+console.log(b.age);
 ```
