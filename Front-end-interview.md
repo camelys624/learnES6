@@ -1090,5 +1090,154 @@ function MyPromise(fn) {
   }
 }
 
+MyPromise.prototype.then = function (onResolved, onRejected) {
+  var self = this;
+  // 规范 2.2.7. then 必须返回一个新的 Promise
+  var promise2;
+  // 规范 2.2. onResolved 和 onRejected 都是可选参数
+  // 如果类型不是函数需要忽略，同时也实现了透传
+  // Promise.resolve(4).then().then((value) => console.log(value))
+  onResolved = typeof onResolved === 'function' ? onResolved : v => v;
+  onRejected = typeof onRejected === 'function' ? onRejected : r => throw r;
+
+  if (self.currentSate === RESOLVED) {
+    return (promise2 = new MyPromise(function (resolve, reject) {
+      // 规范 2.2.4 保证 onFulfilled. onRejected 异步执行
+      // 所以用了 setTimeout 包裹下
+      setTimeout(function () {
+        try {
+          var x = onResolved(self.value);
+          resolutionProdure(promise2, x, resolve, reject);
+        }catch (reason) {
+          reject(reason);
+        }
+      });
+    }));
+  }
+
+  if (self.currentSate === REJECTED) {
+    return (promise2 = new MyPromise(function (resolve, reject) {
+      setTimeout(function () {
+        // 异步执行onRejected
+        try {
+          var x = onRejected(self.value);
+          resolutionProdure(promise2, x, resolve, reject);
+        }catch (reason) {
+          reject(reason);
+        }
+      });
+    }));
+  }
+
+  if (self.currentSate === PENDING) {
+    return (promise2 = new MyPromise(function (resolve, reject) {
+      self.resolvedCallbacks.push(function () {
+        // 考虑到可能会报错，所以使用 try/catch 包裹
+        try {
+          var x = onResolved(self.value);
+          resolutionProdure(promise2, x, resolve, reject);
+        }catch (r) {
+          reject(r);
+        }
+      });
+
+      self.rejectedCallbacks.push(function () {
+        try {
+          var x = onRejected(self.value);
+          resolutionProdure(promise2, x, resolve, reject);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    }));
+  }
+};
+// 规范 2.3
+function resolutionProdure(promise2, x, resolve, reject) {
+  // 规范 2.3.1. x 不能和 promise2 相同，避免循环引用
+  if (promise2 === x) {
+    return reject(new TypeError('Error'));
+  }
+  // 规范 2.3.2
+  // 如果 x 为 promise.状态为 pending 需要继续等待否则执行
+  if (x instanceof MyPromise) {
+    if (x.currentSate === PENDING){
+      x.then(function (value) {
+        // 再次调用该函数是为了确认 x resolve 的
+        // 参数是什么类型，如果是基本类型就再次 resolve
+        // 把值传给下一个 then
+        resolutionProdure(promise2, value, resolve, reject);
+      }, reject);
+    }else {
+      x.then(resolve, reject);
+    }
+    return;
+  }
+  // 规范 2.3.3.3.3
+  // reject 或者 resolve 其中一个执行过的话，忽略其他的
+  let called = false;
+  // 规范 2.3.3. 判断 x 是否为对象或函数
+  if(x !== null && (typeof x === 'object' || typeof x === 'function')) {
+    // 规范 2.3.3.2. 如果不能取出 then，就 reject
+    try {
+      // 规范 2.3.3.1
+      let then = x.then;
+      // 如果 then 是函数，调用 x.then
+      if (typeof then === "function") {
+        // 规范 2.3.3.3
+        then.call(
+          x,
+          y => {
+            if (called) return;
+            called = true;
+            // 规范 2.3.3.3.1
+            resolutionProdure(promise2, y, resolve, reject);
+          },
+          e => {
+            if (called) return;
+            called = true;
+            reject(e);
+          }
+        );
+      }else {
+        // 规范 2.3.3.4
+        resolve(x);
+      }
+    } catch (e) {
+      if (called) return;
+      called = true;
+      reject(e);
+    }
+  } else {
+    // 规范 2.3.4. x 为基本类型
+    resolve(x);
+  }
+}
+```
+
+以上就是根据 Promise/A+ 规范来实现的代码，可以通过 `promise-aplus-tests` 的完整测试
+
+## Generator 实现
+
+Generator 是 ES6 中新增的语法，和 Promise 一样，都可以用来异步编程
+
+```js
+// 使用 * 表示这是一个 Generator 函数
+// 内部可以通过 yield 暂停代码
+// 通过调用 next 恢复执行
+function* test() {
+  let a = 1 + 2;
+  yield 2;
+  yield 3;
+}
+let b = test();
+console.log(b.next());  // -> { value: 2, done: false }
+console.log(b.next());  // -> { value: 3, done: false }
+console.log(b.next());  // -> { value: undefined, done: true }
+```
+
+从上述代码可以发现，加上 `*` 的函数执行后拥有了 `next` 函数，也就是说函数执行后返回了一个对象。每次调用 `next` 函数可以继续执行被暂停的代码。以下是 Generator 函数的简单实现
+
+```js
 
 ```
