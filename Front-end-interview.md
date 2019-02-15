@@ -1239,5 +1239,82 @@ console.log(b.next());  // -> { value: undefined, done: true }
 从上述代码可以发现，加上 `*` 的函数执行后拥有了 `next` 函数，也就是说函数执行后返回了一个对象。每次调用 `next` 函数可以继续执行被暂停的代码。以下是 Generator 函数的简单实现
 
 ```js
+// cb 也就是编译过的 test 函数
+function generator(cb) {
+  return (function() {
+    var object = {
+      next: 0,
+      stop: function() {}
+    };
+    return {
+      next: function() {
+        var ret = cb(object);
+        if (ret === undefined) return { value: undefined, done: true};
+        return {
+          value: ret,
+          done: false
+        };
+      }
+    };
+  })()
+}
+// 如果使用 babel 编译后可以发现 test 函数变成了这样
+function test() {
+  var a;
+  return generator(function(_context) {
+    while(1) {
+      switch ((_context.prev = _context.next)) {
+        // 可以发现通过 yield 将代码分割成几块
+        // 每次执行 next 函数就执行一块代码
+        // 并且表明下次需要执行哪块代码
+        case 0:
+          a = 1 + 2;
+          _context.next = 4;
+          return 2;
+        case 4:
+          _context.next = 6;
+          return 3;
+        // 执行完毕
+        case 6:
+        case "end":
+          return _context.stop();
+      }
+    }
+  })
+}
+```
 
+## Map、FlatMap 和 Reduce
+
+`Map` 作用是生成一个新数组，遍历原数组，将每个元素拿出来做一些变换然后 `append` 到新的数组中。
+
+```js
+[1, 2, 3].map((v) => v + 1)
+// -> [2, 3, 4]
+```
+
+`Map` 有三个参数，分别是当前索引元素，索引，原数组
+
+下面这段代码不懂
+
+```js
+['1', '2', '3'].map(parseInt)
+//  parseInt('1', 0)  -> 1
+// parseInt('2', 1)   -> NaN
+// parseInt('3', 2)   -> NaN
+```
+
+`FlatMap` 和 `map` 的作用几乎是相同的，但是对于多为数组来说，回将原数组降维。可以将 `FlatMap` 看成是 `map` + `flatten` ，目前该函数在浏览器中还不支持。
+
+```js
+[1, [2], 3].flatMap((v) => v + 1)
+//  -> [2, 3, 4]
+```
+
+如果想将一个多为数组彻底的降维，可以这样实现
+
+```js
+const flattenDeep = (arr) => Array.isArray(arr) ? ar.Reduce( (a, b) => [...a, ...flattenDeep(b)], []) : [arr]
+
+flattenDeep([1, [[2], [3, [4]], 5]])
 ```
