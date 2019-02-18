@@ -353,3 +353,84 @@ process.nextTick(() => {
 | http-only | 不能通过 JS 访问 Cookie,减少 XSS 攻击                        |
 | secure    | 只能在协议为 HTTPS 的请求中携带                              |
 | same-site | 规定浏览器不能在跨域请求中携带 Cookie,减少 XSS 攻击          |
+
+### Service Worker
+
+> Service workers 本质上充当 web 应用程序与浏览器之间的代理服务器，也可以在网络可用时作为浏览器和网络间的代理。它们旨在 (除其他之外) 使得能够创建有效的离线体验，拦截网络请求并基于网络是否可用以及更新的资源是否驻留在服务器上来采取适当的动作。它们还允许访问推送通知和后台同步 API。
+
+目前该技术通常用来缓存文件，提高首屏速度，可以试着实现这个功能。
+
+```js
+// index.js
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('sw.js')
+  .then(function (registration) {
+    console.log('service worker 注册成功');
+  })
+  .catch(function(err) {
+    console.log('service worker 注册失败');
+  })
+}
+// sw.js
+// 监听 'install' 事件，回调中缓存所需文件
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open('my-cache').then(function(cache) {
+    return cache.addAll(['./index.html', './index.js'])
+  }))
+})
+
+// 拦截所有请求事件
+// 如果缓存中已经有请求的数据就直接用缓存，否则去请求数据
+self.addEventListener('fetch', e => {
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      if (response) {
+        return response
+      }
+      console.log('fetch source');
+    })
+  )
+})
+```
+
+打开页面，可以在开发者工具中的 `Application` 看到 Service Worker 已经启动了。
+
+![](./static/img/chrome.png)
+
+在 Cache 中也可以发现我们所需的文件已被缓存
+
+![](./static/img/cache.png)
+
+当我们重新刷新页面可以发现我们缓存的数据是从 Service Worker 中读取的
+
+![](./static/img/chrome2.png)
+
+## 渲染机制
+
+浏览器的渲染机制一般分为以下几个步骤
+
+1. 处理 HTML 并构建 DOM 树。
+2. 处理 CSS 构建 CSSDOM 树。
+3. 将 DOM 与 CSSDOM 合并成一个渲染树。
+4. 根据渲染树来布局，计算每个节点的位置。
+5. 调用 GPU 绘制，合成图层，显示在屏幕上。
+
+![](./static/img/render.png)
+
+在构建 CSSDOM 树时，会阻塞渲染，直至 CSSDOM 树构建完成。并且构建 CSSDOM 树是一个十分消耗性能的过程，所以应该尽量保证图层扁平，减少过渡层叠，越是具体的 CSS 选择器，执行速度越慢。
+
+当 HTML 解析到 script 标签时，会暂停构建 DOM，完成后才会从暂停的地方重新开始。也就是说，如果你想首屏渲染得越快，就越不应该在首屏就加载 JS 文件。并且 CSS 也会影响 JS 的执行，只有当解完样式表才会执行 JS，所以也可以认为这种情况下，CSS 也会暂停构建 DOM。
+
+![](./static/img/code.png)
+
+![](./static/img/time.png)
+
+### Load 和 DOMContentLoaded 区别
+
+Load 事件触发代表页面中的 DOM，CSS，JS，图片已经全部加载完毕。
+
+DOMContentLoaded 事件触发代表初始的 HTML 被完全加载和解析，不需要等待 CSS，JS，图片加载。
+
+## 图层
+
+一般来说，可以把普通文档流看成一个图层。特定的属性可以生成一个新的图层。**不同的图层渲染互补影响**，所以对于某些频繁需要渲染的建议单独生成一个新图层，提高性能。**但也不能生成过多的图层，会引起反作用**。
