@@ -1,3 +1,9 @@
+---
+ebook:
+  title: interview-JS
+  author: ykk
+---
+
 # JS
 
 ## 内置类型

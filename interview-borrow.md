@@ -1,3 +1,9 @@
+---
+ebook:
+  title: interview-borrow
+  author: ykk
+---
+
 # 浏览器
 
 ## 事件机制
@@ -109,7 +115,7 @@ jsonp('http://xxx', 'callback', function(value) {
 
 ### CORS
 
-CORS 需要浏览器和后端同时支持.IE 8 和 IE 9 需要通过 `XDomainRequest` 来实现.
+CORS 需要浏览器和后端同时支持 IE 8 和 IE 9 需要通过 `XDomainRequest` 来实现.
 
 浏览器会自动进行 CORS 通信,实现 CORS 通信的关键是后端.只要后端实现了CORS,就实现了跨域.
 
