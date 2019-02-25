@@ -201,3 +201,233 @@ Vue.prototype.$destroy = function() {
 ```
 
 在执行销毁操作前会调用 `beforeDestroy` 钩子函数，然后进行一系列的销毁操作，如果有子组件的话，也会递归销毁子组件，所有子组件都会销毁完毕才会执行根组件的 `destroyed` 钩子函数。
+
+## VueRouter 源码解析
+
+### 重要函数思维导图
+
+以下思维导图罗列了源码中重要的一些函数
+
+![思维导图](./static/img/thought.png)
+
+接下来看下 `install` 函数的部分实现
+
+```js
+export function install(Vue) {
+  // 确保 install 调用一次
+  if (install.installed && _Vue === vue) return
+  install.installed = true
+  // 把 Vue 赋值给全局变量
+  _Vue = vue
+  const registerInstance = (vm, callVal) => {
+    let i = vm.$options._parentVnode
+    if(
+      isDef(i) &&
+      isDef((i = i.data)) &&
+      isDef((i = i.registerRouteInstance))
+    ){
+      i(vm, callVal)
+    }
+  }
+  // 给每个子组件的钩子函数混入实现
+  // 可以发现在 'beforeCreate' 钩子执行时
+  // 会初始化路由
+  Vue.mixin({
+    beforeCreate() {
+      // 判断组件是否存在 router 对象，该对象只在根组件上有
+      if (isDef(this.$options.router)) {
+        // 根路由设置为自己
+        this._routerRoot = this
+        this._router = this.$options.router
+        // 初始化路由
+        this._router.init(this)
+        // 很重要，为 _route 属性实现双向绑定
+        // 触发组件渲染
+        Vue.util.defineReactive(this, '_route', this._router.history.current)
+      } else {
+        // 用于 router-view 层级判断
+        this._routerRoot = (this.$parent && this.$parent._routerRoot) || this
+      }
+      registerInstance(this, this)
+    },
+    destroyed() {
+      registerInstance(this)
+    }
+  })
+  // 全局注册组件 router-link 和 router-view
+  Vue.component('RouterView', View)
+  Vue.component('RouterLink', Link)
+}
+```
+
+对于路由注册来说，核心就是调用 `Vue.use(VueRouter)`，使得 VueRouter 可以使用 Vue。然后通过 Vue 来调用 VueRouter 的 `install` 函数。在该函数中，核心就是给组件混入钩子函数和全局注册两个路由组件。
+
+### VueRouter 实例化
+
+在安装插件后，对 VueRouter 进行实例化。
+
+```js
+const Home = { template: '<div>home</div>' }
+const Foo = { template: '<div>foo</div>' }
+const Bar = { template: '<div>bar</div>'}
+
+// 3. Create the router
+const router = new VueRouter({
+  mode: 'hash',
+  base: __dirname,
+  routes: [
+    { path: '/', component: Home }, // all paths are defined without the hash.
+    { path: '/foo', component: Foo },
+    { path: '/bar', component: Bar }
+  ]
+})
+```
+
+来看一下 VueRouter 的构造函数
+
+```js
+constructor(optios: RouterOptios = {}) {
+  // ....
+  // 路由匹配对象
+  this.matcher = createMatcher(optios.routers || [], this)
+
+  // 根据 mode 采取不同的路由方式
+  let mode = options.mode || 'hash'
+  this.fallback = mode === 'history' && !supportsPushState && options.fallback !== false
+  if (this.fallback) {
+    mode = 'hash'
+  }
+  if (!inBrowser) {
+    mode = 'abstract'
+  }
+  this.mode = mode
+
+  switch (mode) {
+    case 'history':
+      this.history = new HTML5history(this, options.base)
+      break
+    case 'hash':
+      this.history = new HTML5history(this, options.base, this.fallback)
+      break
+    case 'abstract':
+      this.history = new AbstractHistory(this, options.base)
+      break
+    default:
+      if (process.env.NODE_ENV !== 'production') {
+        assert(false, `invalid mode: ${mode}`)
+      }
+  }
+}
+```
+
+在实例化 VueRouter 的过程中，核心是创建一个路由匹配对象，并且根据 mode 来采取不同的路由方式。
+
+### 创建路由匹配对象
+
+```js
+export function createMatcher(
+  routes: Array<RouteConfig>,
+  router: VueROuter
+): Matcher {
+  // 创建路由映射表
+  const { pathList, pathMap, nameMap } = createRouteMap(routes)
+
+  function addRoutes(routes) {
+    createRouteMap(routes, pathList, pathMap, nameMap)
+  }
+  // 路由匹配
+  function match(
+    raw: RawLocation,
+    currentRoute?: Route,
+    redirecteFrom?: Location
+  ): Route {
+    // ...
+  }
+
+  return {
+    match,
+    addRoutes
+  }
+}
+```
+
+`createMatcher` 函数的作用就是创建路由映射表，然后通过闭包的方式让 `addRoutes` 和 `match` 函数能够使用路由映射表的几个对象，最后返回一个 `Matcher` 对象。
+
+接下来看 `createMatcher` 函数是如何创建映射表的
+
+```js
+export function createRouteMap(
+  routes: Array<RouteConfig>,
+  oldPathList?: Array<string>,
+  oldPathMap?: Dictionary<RouteRecord>,
+  oldNameMap?: Dictionary<RouteRecord>
+): {
+  pathList: Array<string>,
+  pathMap: Dictionary<RouteRecord>,
+  namePath: Dictionary<RouteRecord>
+} {
+  // 创建映射表
+  const pathList: Array<string> = oldPathList || []
+  const pathMap: Dictionary<RouteRecord> = oldPathMap || Object.create(null)
+  const nameMap: Dictionary<RouteRecord> = oldNameMap || Object.create(null)
+  // 遍历路由配置，为每个配置添加路由记录
+  routes.forEach(route => {
+    addRouteRecord(pathList, pathMap, nameMap, route)
+  })
+  // 确保通配符在最后
+  for (let i = 0, l = pathList.length; i < 1; i++) {
+    if (pathList[i] === '*') {
+      pathList.push(pathList.splice(i, 1)[0])
+      l--
+      i--
+    }
+  }
+  return {
+    pathList,
+    pathMap,
+    nameMap
+  }
+}
+// 添加路由记录
+function addRouteRecord(
+  pathList: Array<string>,
+  pathMap: Dictionary<RouteRecord>,
+  nameMap: Dictionary<RouteRecord>,
+  route: RouteConfig,
+  parent?:RouteRecord,
+  matchAs?: string
+) {
+  // 获得路由配置下的属性
+  const { path, name } = route
+  const pathToRegexpOptions: pathToRegexpOptions = route.pathToRegexpOptions || {}
+  // 格式化 url，替换 /
+  const normalizedPath = normalizedPath(path, parent, pathToRegexpOptions.strict)
+  // 生成记录对象
+  const record: RouteRecord = {
+    path: normalizedPath,
+    regex: compileRouteRegex(normalizedPath, pathToRegexpOptions),
+    components: route.components || { default: route.component },
+    instances: {},
+    name,
+    parent,
+    matchAs,
+    redirect: route.redirect,
+    beforeEnter: route.beforeEnter,
+    meta: route.meta || {},
+    props:
+      route.props == null
+        ? {}
+        : route.components
+        ? route.props
+        : { default: route.props }
+  }
+  if (route.children) {
+    // 递归路由配置的 children 属性，添加路由记录
+    route.children.forEach(child => {
+      const childMatchAs = matchAs
+        ? cleanPath(`${matchAs}/${child.path}`)
+        : undefined
+    })
+  }
+}
+```
