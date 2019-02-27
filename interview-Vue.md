@@ -861,3 +861,262 @@ const queue: Array<?navigationGuard> = [].concat(
   resolveAsyncComponents(activated)
 )
 ```
+
+第一步是先执行失活组件的钩子函数
+
+```js
+function extractLeaveGuards(deactivated: Array<RouteRecord>): Array<?Function> {
+  // 传入需要执行的钩子函数名
+  return extractGuards(deactivated, 'beforeRouteLeave', bindGuard, true)
+}
+function extractGuards(
+  records: Array<RouteRecord>,
+  name: string,
+  bind: Function,
+  reverse?: boolean
+): Array<?Function> {
+  const guards = flatMapComponents(records, (def, instance, match, key) => {
+    // 找出组件中的钩子函数添加为上下文对象为组件自身
+    const guard = extractGuard(def, name)
+    if (guard) {
+      // 给每个钩子函数添加上下文对象为组件自身
+      return Array.isArray(guard)
+        ? guard.map(guard => bind(guard, instance, match, key))
+        : bind(guard, instance, match, key)
+    }
+  })
+  // 数组降维，并且判断是否需要翻转数组
+  // 因为某些钩子函数需要从子执行到父
+  return flatten(reverse ? guards.reverse() : guards)
+}
+export function flatMapComponents(
+  matched: Array<RouteRecord>,
+  fn: Function
+): Array<?Function> {
+  // 数组降维
+  return flatten(
+    matched.map(m => {
+      // 将组件中的对象传入回调函数中，获得钩子函数数组
+      return Object.keys(m.components).map(key =>
+        fn(m.components[key], m.instances[key], m, key)
+      )
+    })
+  )
+}
+```
+
+第二步执行全局 beforeEach 钩子函数
+
+```js
+beforeEach(fn: Function): Function {
+  return registerHook(this.beforeHooks, fn)
+}
+function registerHook(list: Array<any>, fn: Function): Function {
+  list.push(fn)
+  return () => {
+    const i = list.indexOf(fn)
+    if (i > -1) list.splice(i, 1)
+  }
+}
+```
+
+在 Vueouter 类中有以上代码，每当给 VueRouter 实例添加 beforeEach 函数时就会将函数 push 进 beforeHooks 中。
+
+第三步执行 `beforeRouteUpadate` 钩子函数，调用方式和第一步相同，只是传入的函数名不同，在该函数中可以访问到 `this` 对象。
+
+第四步执行 `beforeEnter` 钩子函数，该函数是路由独享的钩子函数。
+
+第五步是解析异步组件。
+
+```js
+export function resolveAsyncComponents(matched: Array<RouteRecord): Function {
+  return (to, from, next) => {
+    let hasAsync = false
+    let pending = 0
+    let error = null
+    // 该函数作用之前已经介绍过了
+    flatMapComponents(matched, (def, _, match, key) => {
+      // 判断是否是异步组件
+      if (typeof def === 'function' && def.cid === undefined) {
+        hasAsync = true
+        pending++
+        // 成功回调
+        // once 函数确保异步组件只加载一次
+        const resolve = once(resolveDef => {
+          if (isESModule(resolvedDef)) {
+            resolvedDef = resolvedDef.default
+          }
+          // 判断是否是构造函数
+          // 不是的话通过 Vue 来生成组件构造函数
+          de.resolved = typeof resolvedDef === 'function'
+            ? resolvedDef
+            : _Vue.extend(resolvedDef)
+          // 赋值组件
+          // 如果组件全部解析完毕，继续下一步
+          match.components[key] = resolvedDef
+          pending--
+          if (pending <= 0) {
+            next()
+          }
+        })
+        // 失败回调
+        const reject = once(reason => {
+          const msg = `Failed to resolve async component ${key}: ${reason}`
+          process.env.NODE_ENV !== 'production' && warn(false, msg)
+          if (!error) {
+            error = isError(reason) ? reason : new Error(msg)
+            next(error)
+          }
+        })
+        let res
+        try {
+          // 执行异步组件函数
+          res = def(resolve, reject)
+        } catch (e) {
+          reject(e)
+        }
+        if (res) {
+          // 下载完成执行回调
+          if (typeof res.then === 'function') {
+            res.then(resolve, reject)
+          } else {
+            const comp = res.component
+            if (comp && typeof com.then === 'function') {
+              comp.then(resolve, reject)
+            }
+          }
+        }
+      }
+    })
+    // 不是异步组件直接下一步
+    if (!hasAsync) next()
+  }
+}
+```
+
+以上就是第一个 `runQueue` 中的逻辑，第五步完成后会执行第一个 `runQueue` 中回调函数
+
+```js
+// 该回调用于保存
+const postEnterCbs = []
+const isValid = () => this.current === route
+// beforeRouteEnter 导航守卫钩子
+const enterGuards = extractEnterGuards(activated, postEnterCbs, isValid)
+// beforeResolve 导航守卫钩子
+const queue = enterGuards.concat(this.router.resolveHooks)
+runQueue(queue, iterator, () => {
+  if (this.pending ！== route) {
+    return abort()
+  }
+  this.pending = null
+  // 这里会执行 afterEach 导航守卫钩子
+  onComplete(route)
+  if (this.router.app) {
+    this.router.app.$nextTick(() => {
+      postEnterCbs.forEach(cb => {
+        cb()
+      })
+    })
+  }
+})
+```
+
+第六步是执行 `beforeRouteEnter` 再到行守卫钩子，`beforeRouteEnter` 钩子不能访问 `this` 对象，因为钩子在导航确认前被调用，需要渲染得组件还没被创建。但是该钩子函数是唯一一个支持在回调中获取 `this` 对象的函数，回调会在路由确认执行。
+
+```js
+beforeRouteEnter (to, from, next) {
+  next(vm => {
+    // 通过 'vm' 访问组件实例
+  })
+}
+```
+
+接下来看看是如何支持杂回调中拿到 `this` 对象的
+
+```js
+function extractEnterGuards(
+  activated: Array<RouteRecord>,
+  cbs: Array<Function>,
+  isValid: () => boolean
+): Array<?Function> {
+  // 这里和之前调用导航守卫基本一致
+  return extractGuards(
+    activated,
+    'beforeRouteEnter',
+    (guard, _, match, key) => {
+      return bindEnterGuard(guard, match, key, cbs, isValid)
+    }
+  )
+}
+function bindEnterGuard(
+  guard: navigationGuard,
+  match: RouteRecord,
+  key: string,
+  cbs: Array<Function>,
+  isValid: () => boolean
+): navigationGuard {
+  return function routeEnterGuard(to, from, next) {
+    return guard(to, from, cb => {
+      // 判断 cb 是否是函数
+      // 是的话就 push 进 postEnterCbs
+      next(cb)
+      if (typeof cb === 'function') {
+        cbs.push(() => {
+          // 循环直到拿到组件实例
+          poil(cb, match.instances, key, isValid)
+        })
+      }
+    })
+  }
+}
+// 该函数是为了解决 issus ##750
+// 当 router-view 外面包裹了 mode 为 out-in 的 transition 组件
+// 会在组件初次导航到时获得不到组件实例对象
+function poil(
+  cb: any,  // somehow flow cannot infer this is a function
+  instances: Object,
+  key: string,
+  isValid: () => boolean
+) {
+  if (
+    instances[key] &&
+    !instances[key]._isBeingDestroyed // do not reuse being destroyed instance
+  ) {
+    cb(instances[key])
+  } else if (isValid()) {
+    // setTimeout 16ms 作用和 nextTick 基本相同
+    setTimeout(function () {
+      poll(cb, instances, key, isValid)
+    }, 16);
+  }
+}
+```
+
+第七步是执行 `beforeResolve` 导航守卫钩子，如果注册了全局 `beforeResolve` 钩子就会在这里执行。
+
+第八步就是导航确认，调用 `afterEach` 导航守卫钩子了。
+
+以上都执行完成后，会触发组件的渲染
+
+```js
+history.listen(route => {
+  this.apps.forEach(app => {
+    app._route = route
+  })
+})
+```
+
+以上回调会在 `updateRoute` 中调用
+
+```js
+updateRoute(route: Route) {
+  const prev = this.current
+  this.current = route
+  this.cb && this.cb(route)
+  this.router.afterHooks.forEach(hook => {
+    hook && hook(route, prev)
+  })
+}
+```
+
+至此，路由跳转已经全部分析完毕。核心就是判断需要跳转的路由是否存在于记录中，然后执行各种导航守卫函数，最后完成 URL 的改变和组件的渲染。

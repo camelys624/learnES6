@@ -48,3 +48,10 @@
 | B-Num      | 编号   | String |
 | B-Location | 里程   | String |
 | B-Type     | 类型   | String |
+
+
+## 安装依赖包步骤
+
+1. 第一步，win + R 打开运行
+2. 第二步，输入 cmd 回车
+3. 第三步，输入 `pip instll xxx` 'xxx' 就是需要安装的包名
