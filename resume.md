@@ -12,7 +12,7 @@ Email: camel_yangz@163.com
 
 GitHub: [https://github.com/camelys624](https://github.com/camelys624)
 
-twitter: []
+twitter: [CJam624](https://twitter.com/CJam624)
 
 ## 教育经历
 
@@ -49,3 +49,21 @@ twitter: []
 **本人职责：** 在该项目中，本人负责了其中图书馆子系统近 60% 的前端工作。具体包括与后台合作实现了一份档案从创建 -> 归档 -> 审核 -> 上架；档案的借阅 (移交、销毁) -> 审核 -> 借出 (移交、销毁) 这四条流程，以及这些过程中产生的数据操作信息记录。档案模板的可视化布局实现以及将 layui 选中的数据通过 iframe 父子页面通信传递给 angular 并在传递回来时重绘。各种审核验证信息弹出层的父子页面通信。
 
 **相关技术：** layui、HTML、CSS3、JavaScript、jQuery、Java
+
+## 专业技能
+
+- 熟练掌握 DIV + CSS 页面布局，熟悉 W3C 标准，掌握 flex 与网格布局，掌握 CSS3 新特性。
+- 熟练使用原生 JS，对 JS 的设计模式也有所了解，了解 ES6，当然对 NodeJS 也略有涉猎。
+- 了解 Vue.js 与 Angular 前端框架，掌握 webpack 打包工具，了解 ECharts 与 D3.js 数据可视化框架。
+- 熟悉 HTTP 协议以及计算机网络体系结构，了解计算机网络原理。
+- 熟悉 Linux(Ubuntu) 操作系统，现基本上在 Ubuntu 上写代码。
+- 熟练使用 Photoshop、AE 等图形设计软件。
+
+## 兴趣爱好
+
+- 读书： 喜欢看散文、短篇小说以及名著
+- 音乐： 拒绝音乐快餐
+- 计算机： 软硬件，关于计算机的都比较感兴趣
+- 影视： 老电影，老电视剧
+- 体育运动： 羽毛球、有氧运动
+- 电子游戏： LOL、overwatch...
