@@ -38,7 +38,7 @@ twitter: [CJam624](https://twitter.com/CJam624)
 
 项目后端采用的 SSM 框架，将数据库中的数据处理之后，传递给前端；前段使用 bootstrap 框架进行页面的设计与布局，利用 Ajax 与后端通信，获取数据，然后利用 ECharts 框架实现数据可视化或者使用 Vue.js 渲染数据。
 
-**个人职责：** 1. 与组员确定需求分析；2. 前端页面设计，并利用 bootstrap 框架实现静态页面；3. 定义接口以及需要用到的字段;4. 处理后台数据，并将处理结果利用 ECharts 或者 Vue.js 渲染出来。5. 选择合适 ECharts 图表展示数据。
+**本人职责：** 1. 与组员确定需求分析；2. 前端页面设计，并利用 bootstrap 框架实现静态页面；3. 定义接口以及需要用到的字段;4. 处理后台数据，并将处理结果利用 ECharts 或者 Vue.js 渲染出来。5. 选择合适 ECharts 图表展示数据。
 
 **相关技术：** Java、ECharts、bootstrap、JavaScript
 
