@@ -1,9 +1,11 @@
 # 编程风格
+
 很多公司和组织公开了它们的风格规范，下面内容主要参考了[Airbnb](https://github.com/airbnb/javascript)公司的JavaScript风格规范。
 
-### 1. 块级作用域
+## 1. 块级作用域
 
-#### (1) [let取代var](../let&const/let和const命令.md)
+### (1) [let取代var](../let&const/let和const命令.md)
+
 ES6提出了两个新的变量声明的命令：`let`和`const`。其中，`let`完全可以取代`var`，因为两者语义相同。而且`let`没有副作用。
 
 `var`命令存在变量提升效用，`let`命令没有这个问题。
@@ -19,7 +21,8 @@ if (true) {
 
 如果使用`var`代替`let`，`console.log`那一行就不会报错，而是会输出`undefined`。
 
-#### (2) 全局常量和线程安全
+### (2) 全局常量和线程安全
+
 在`let`和`const`之间，建议优先使用`const`，尤其是在全局环境，不应该设置变量，只应设置常量。
 
 `const`优于`let`有几个原因。一个是`const`可以提醒阅读程序的人，这个变量不应该改变；另一个是`const`比较符合函数是编程思想，运算不改变值，只是新建值，而且这样有利于将来的分布式运算；最后一个原因是JavaScript编译器会对`const`进行优化，所以多使用`const`有利于提高程序的运行效率，也就是说`let`和`const`的本质区别，其实是编译器内部的处理不同。
@@ -46,6 +49,7 @@ const [a, b, c] = [1, 2, 3];
 ------------------
 
 ### 2. [字符串](../string/string.md)
+
 静态字符串一律使用单引号或反引号，不使用双引号。动态字符串使用反引号。
 
 ``` js
@@ -60,9 +64,11 @@ const c = `foobar`;
 const a = 'foobar';
 const b = `foo${a}bar`;
 ```
------------------
+
+------------------
 
 ### 3. 解构赋值
+
 使用数组成员对变量赋值时，优先使用解构赋值。
 
 ``` js
@@ -113,6 +119,7 @@ const { left, right } = processInput(input);
 ```
 
 ### 4. 对象
+
 单行定义的对象，最后一个成员不以逗号结尾。多行定义的对象，最后一个成员以逗号结尾。
 
 ``` js
@@ -161,7 +168,7 @@ obj[getKey('enabled')] = true;
 const obj = {
   id: 5,
   name: 'San Francisco',
-  [getKey('enabled')]: true,
+  [getKey('enabled')]: true
 };
 ```
 
@@ -191,9 +198,10 @@ const atom = {
 };
 ```
 
----------------------
+------------------
 
 ### 5. 数组
+
 使用扩展运算符(...)拷贝数组。
 
 ``` js
@@ -216,9 +224,10 @@ const foo = document.querySelectorAll('.foo');
 const nodes = Array.from(foo);
 ```
 
---------------------
+------------------
 
 ### 6. 函数
+
 立即执行函数可以写成箭头函数的形式
 
 ``` js
@@ -305,9 +314,10 @@ function handleThings(opts = {}) {
 }
 ```
 
----------------------
+------------------
 
 ### 7. Map结构
+
 注意区分Object和Map，只有模拟现实世界的实体对象时，才使用Object。如果只是需要`key:value`的数据结构，使用Map结构。因为Map有内建的遍历机制。
 
 ``` js
@@ -326,9 +336,10 @@ for(let item of map.entries()) {
 }
 ```
 
--------------------
+------------------
 
 ### 8. Class
+
 总是用Class，取代需要prototype的操作。因为Class的写法更简洁，更易于理解。
 
 ``` js
@@ -378,9 +389,10 @@ class PeekableQueue extends Queue {
 }
 ```
 
-----------------
+------------------
 
 ### 9. 模块
+
 首先，Module语法时JavaScript模块的标准写法，坚持使用这种写法。使用`import`取代`require`。
 
 ``` js
@@ -453,9 +465,10 @@ const StyleGuide = {
 export default StyleGuide
 ```
 
---------------
+------------------
 
 ### 10. ESLint的使用
+
 ESLint是一个语法规则和代码风格的检查工具，可以用来保证写出语法正确、风格统一的代码。
 
 首先，安装ESLint。
