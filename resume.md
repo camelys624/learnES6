@@ -20,11 +20,11 @@ twitter: [CJam624](https://twitter.com/CJam624)
 
 ## 专业技能
 
-- 熟练掌握 DIV + CSS 页面布局，熟悉 W3C 标准，掌握 flex 与网格布局，掌握 CSS3 新特性。
-- 熟练使用原生 JS，对 JS 的设计模式也有所了解，了解 ES6，当然对 NodeJS 也略有涉猎。
-- 了解 Vue.js 与 Angular 前端框架，掌握 webpack 打包工具，了解 ECharts 与 D3.js 数据可视化框架。
+- 熟练掌握 flex 与 grid 页面布局，熟悉 W3C 标准，掌握 CSS3 新特性。
+- 熟练掌握 ES5，掌握ES6，掌握 JavaScript 常用的设计模式，了解 nodejs。
+- 掌握 Vue.js 前端框架，掌握 webpack 打包工具，了解 ECharts 与 D3.js 数据可视化框架。
 - 熟悉 HTTP 协议以及计算机网络体系结构，了解计算机网络原理。
-- 熟悉 Linux(Ubuntu) 操作系统，现基本上在 Ubuntu 上写代码。
+- 熟悉 Linux(Ubuntu) 操作系统，了解 Linux 的一些基本命令。
 - 熟练使用 Photoshop、AE 等图形设计软件。
 
 ## 项目经历
@@ -33,7 +33,9 @@ twitter: [CJam624](https://twitter.com/CJam624)
 
 **内容：** 本项目是为中山市政府做的一个对危险废物进行监管的平台，该平台使用大数据、物联网与地理信息等相关技术实现对危险废物的产生->运输->填埋全程监管。
 
-**本人职责：** 
+**本人职责：** 利用d2-admin搭建配置前端项目；根据上一个项目即欧亚ERP的经验，通过对d2-crud组件的研究分析，提取出了一套适用于本公司此类型项目的组件；对可能需要复用的代码进行封装处理；利用CSS3的grid网格布局控制页面的排版，使用echarts实现数据可视化。
+
+**相关技术：** VUE、HTML、CSS3、ES6
 
 ### 欧亚ERP管理系统     2019.03-2019.06
 
