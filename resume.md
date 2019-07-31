@@ -6,13 +6,9 @@
 
 > **杨升**         男      23岁   重庆市潼南县
 
-TEL: 15922835412
-
-Email: camel_yangz@163.com
-
-GitHub: [https://github.com/camelys624](https://github.com/camelys624)
-
-twitter: [CJam624](https://twitter.com/CJam624)
+| TEL: 15922835412  |  Email: camel_yangz@163.com |
+| ----- | ----- |
+| GitHub: [https://github.com/camelys624](https://github.com/camelys624) | twitter: [CJam624](https://twitter.com/CJam624) |
 
 ## 教育经历
 
@@ -45,7 +41,7 @@ twitter: [CJam624](https://twitter.com/CJam624)
 
 在项目中，本人负责了大部分的页面编写及修改；对于审核流程页面，由于涉及到的节点比较多，我们使用的vuex来管理需要用到的数据；对于首页，它不同于一般的列表页面，我使用了grid布局来实现。
 
-在项目中，首先我学会了使用VUE以及基于VUE的element-ui框架；编写了一些自己的组件；对VUE的子父组件通信，mixins等知识有所理解；学习了使用vuex管理数据。
+在项目中，首先我学会了使用VUE以及基于VUE的element-ui框架；编写了一些自己的组件；对VUE的子父组件通信，mixins等知识有所理解；学会了使用vuex管理数据。
 
 **相关技术：**  VUE、HTML、CSS3、ES6、Java
 
@@ -63,9 +59,15 @@ twitter: [CJam624](https://twitter.com/CJam624)
 
 **项目描述：** 这是重庆夔牛科技的一个自研系统，对其所售产品的一套配套软件，它包含四个子系统。用户可以在这上面分配权限、查看库房环境信息、自定义档案流程等功能。
 
-在该项目中，本人负责了其中图书馆子系统大半的前端工作。
+在该项目中，本人负责了其中图书馆子系统大半的前端工作。包括对ui设计的页面使用CSS实现；与后台沟通交流，处理后台传过来的数据；根据相关需求操作DOM树等。
+
+在这个项目中，我从一个只会写静态页面的人转变为了一个熟练使用js与jQuery的前端开发者。在这里，我学会了使用js操作dom，使用Ajax与后台通信以及对json数据的处理，学会了使用谷歌浏览器调试样式与代码。最重要的是，我理解了js的立即执行函数、js的原型与原型链、执行上下文、函数与闭包以及js的设计模式并用于实践，这一切使我认识到了js的美丽，也使我意识到了CS的魅力。
 
 **相关技术：** layui、HTML、CSS3、JavaScript、jQuery、Java
+
+### 其他项目
+
+还有许多与编程相关以及与编程无关的项目就不一一赘述了，但是所有我参与的项目我都有尽我自己最大的努力去做，有不清楚的就去网上找文章研究或者跟着视频一步一步完成。但是这些项目有个问题就是没有标准和规范，所以就显得杂乱无章。
 
 ## 兴趣爱好
 
