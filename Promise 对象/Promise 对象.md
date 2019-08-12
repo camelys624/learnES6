@@ -248,3 +248,142 @@ server.listen(port).then(function () {
 ```js
 const p = Promise.all([p1, p2, p3]);
 ```
+
+上面代码中，`promise.all`方法接受一个数组作为参数，`p1`、`p2`、`p3`都是 Promise 实例，如果不是，就会先调用下面讲到的`Promise.resolve`方法，将参数转为 Promise 实例，再进一步处理。(`Promise.all`方法的参数可以不是数组，但必须具有 Iterator 接口，且返回的每个成员都是 Promise 实例。)
+
+`p`的状态由`p1`、`p2`、`p3`决定，分成两种情况。
+
+1. 只有`p1`、`p2`、`p3`的状态都变成`fulfilled`，`p`的状态才回变成`fulfilled`，此时`p1`、`p2`、`p3`的返回值组成一个数组，传递给`p`的回调函数。
+2. 只要`p1`、`p2`、`p3`之中有一个被`reject`，`p`的状态就变成`rejected`，此时第一个`reject`的实例返回值，会传递给`p`的回调函数。
+
+##　6. Promise.race()
+
+`Promise.race`方法同样是将多个 Promise 实例，包装成一个新的 Promise 实例。
+
+```js
+const p = Promise.race([p1, p2, p3])
+```
+
+上面代码中，只要`p1`、`p2`、`p3`之中有一个实例率先改变状态，`p`的状态就跟着改变。那个率先改变的 Promise 实例的返回值，就传递个`p`的回调函数。
+
+`Promise.race`方法的参数与`Promise.all`方法一样，如果不是 Promise 实例，就会先调用下面讲到的`Promise.resolve`方法，将参数转为 Promise 实例，再进一步处理。
+
+下面是一个例子，如果指定时间内没有获得结果，就将 Promise 的状态变为 `reject`，否则变为`resolve`。
+
+```js
+const p = Promise.race([
+    fetch('/resource-that-may-take-a-while'),
+    new Promise(function (resolve, reject) {
+        setTimeout(() => reject(new Error('request timeout')), 5000)
+    })
+])
+
+p.then(console.log).catch(console.error)
+```
+
+上面代码中，如果 5 秒之内`fetch`方法无返回结果，变量`p`的状态就会变成`rejected`，从而触发`catch`方法指定的回调函数。
+
+## 8. Promise.resolve()
+
+有时需要将现有对象转为 Promise 对象，`Promise.resolve`方法就起到这个作用。
+
+```js
+const jsPromise = Promise.resolve($.ajax('/whatever.json'))
+```
+
+上面代码将 jQuery 生成`deferred`对象，转为一个新的 Promise 对象。
+
+`Promise.resolve`等价于下面的写法。
+
+```js
+Promise.resolve('foo')
+// 等价于
+new Promise(resolve => resolve('foo'))
+```
+
+`Promise.resolve`方法的参数分为四种情况。
+
+**(1) 参数是一个** **Promise 实例**
+
+如果参数是 Promise 实例，那么`Promise.resolve`将不做任何修改、原封不动地返回这个实例。
+
+**(2) 参数是一个`thenable`对象**
+
+`thenable`对象指的是具有`then`方法的对象，比如下面这个对象。
+
+```js
+let thenable = {
+    then: function (resolve, reject) {
+        resolve(42)
+    }
+}
+```
+
+`Promise.resolve`方法会将这个对象转为 Promise 对象，然后就立即执行`thenable`对象的`then`方法。
+
+```js
+let thenable = {
+    then: function (resolve, reject) {
+        resolve(42)
+    }
+}
+
+let p1 = Promise.resolve(thenable)
+p1.then(function (value) {
+    console.log(value)  // 42
+})
+```
+
+**(3) 参数不是具有`then`方法的对象，或根本就不是对象**
+
+如果参数是一个原始值，或者是一个不具有`then`方法的对象，则`Promise.resolve`方法返回一个新的 Promise 对象，状态为 `resolved`。
+
+```js
+const p = Promise.resolve('Hello')
+
+p.then(function (s) {
+    console.log(s)
+})
+
+// Hello
+```
+
+上面代码生成一个新的 Promise 对象的实例`p`。由于字符串`Hello`不属于异步操作 ( 判断方法是字符串对象不具有 then 方法 )，返回 Promise 实例的状态从一生成就是 `resolved`，所以回调函数会立即执行。`Promise.resolve`方法的参数，会同时传给回调函数。
+
+**(4) 不带有任何参数**
+
+`Promise.resolve()`方法允许调用时不带参数，直接返回一个`resolved`状态的 Promise 对象。
+
+所以，如果希望得到一个 Promise 对象，比较方便的方法就是直接调用`Promise.resolve()`方法。
+
+```js
+const p = Promise.resolve();
+
+p.then(() => {
+    // ...
+})
+```
+
+上面代码的变量`p`就是一个 Promise 对象。
+
+需要注意的是，立即`resolve()`的 Promise 对象，是在本轮“事件循环”( event loop ) 的结束时执行，而不是在下一轮“事件循环”的开始时。
+
+```js
+setTimeout(function () {
+    console.log('three')
+}, 0);
+
+Promise.resolve().then(() => {
+    console.log('two')
+})
+
+console.log('one')
+
+// one
+// two
+// three
+```
+
+上面代码中，`setTimeout(fn, 0)`在下一轮“事件循环”开始时执行，`Promise.resolve()`在本轮“事件循环”结束时执行，`console.log('one')`则是立即执行，因此最先输出。
+
+## 9. Promise.reject()
