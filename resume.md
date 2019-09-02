@@ -16,8 +16,8 @@
 
 ## 专业技能
 
-- 熟练掌握 flex 与 grid 页面布局，熟悉 W3C 标准，掌握 CSS3 新特性。
-- 熟练掌握 ES5，掌握ES6，掌握 JavaScript 常用的设计模式，了解 nodejs。
+- 熟练掌握 CSS3 新特性，包括 flex 与 grid 页面布局，animation 动画，filter 过滤器等。
+- 深入理解 JS 的原型与原型链，执行上下文，作用域链等基础知识。熟练掌握 ES6 的解构赋值，Promise 对象等知识。
 - 掌握 Vue.js 前端框架，掌握 webpack 打包工具，了解 ECharts 与 D3.js 数据可视化框架。
 - 熟悉 HTTP 协议以及计算机网络体系结构，了解计算机网络原理。
 - 熟悉 Linux(Ubuntu) 操作系统，了解 Linux 的一些基本命令。
