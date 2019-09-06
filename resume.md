@@ -19,7 +19,7 @@
 - 熟练掌握 CSS3 新特性，包括 flex 与 grid 页面布局，animation 动画，filter 过滤器等。
 - 深入理解 JS 的原型与原型链，执行上下文，作用域链等基础知识。熟练掌握 ES6 的解构赋值，Promise 对象, sync 函数等知识。
 - 熟悉 web 语义化以及 HTML5 的新特性，熟悉 HTTP 协议以及计算机网络体系结构，了解计算机网络原理。
-- 熟练掌握 Vue.js 框架的组件式编程、子父组件通信，掌握 vuex 状态管理插件，掌握 webpack 打包工具，了解 D3.js 图表框架。
+- 熟练掌握 Vue.js 框架的组件式编程、子父组件通信，掌握 vuex 状态管理插件，熟悉 react 前端框架以及基于它的 react native 框架，掌握 webpack 打包工具，了解 D3.js 图表框架。
 - 熟悉 Linux(Ubuntu) 操作系统，会基本的命令行操作。
 - 熟练使用 Photoshop、AE 等图形设计软件，能剪辑视频，做动画，页面排版等操作。
 
