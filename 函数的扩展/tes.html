@@ -1,0 +1,27 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function foo() {
+        (function() {
+            console.log('id:', this.id);
+        })()
+    }
+
+    var id = 21;
+
+    foo.call({
+        id: 42
+    });
+</script>
+
+</html>

@@ -87,9 +87,9 @@ JSONP 的原理很简单,就是利用 `<script>` 标签没有跨域限制的漏�
 ```html
 <script src="http://domain/api?param1=a&param2=b&callback=jsonp"></script>
 <script>
-    function jsonp(data) {
-    	console.log(data)
-	}
+function jsonp(data) {
+  console.log(data)
+}
 </script>
 ```
 
@@ -401,15 +401,15 @@ self.addEventListener('fetch', e => {
 
 打开页面，可以在开发者工具中的 `Application` 看到 Service Worker 已经启动了。
 
-![](./static/img/chrome.png)
+![chrome](./static/img/chrome.png)
 
 在 Cache 中也可以发现我们所需的文件已被缓存
 
-![](./static/img/cache.png)
+![cache](./static/img/cache.png)
 
 当我们重新刷新页面可以发现我们缓存的数据是从 Service Worker 中读取的
 
-![](./static/img/chrome2.png)
+![chrome2](./static/img/chrome2.png)
 
 ## 渲染机制
 
@@ -421,7 +421,7 @@ self.addEventListener('fetch', e => {
 4. 根据渲染树来布局，计算每个节点的位置。
 5. 调用 GPU 绘制，合成图层，显示在屏幕上。
 
-![](./static/img/render.png)
+![render](./static/img/render.png)
 
 在构建 CSSDOM 树时，会阻塞渲染，直至 CSSDOM 树构建完成。并且构建 CSSDOM 树是一个十分消耗性能的过程，所以应该尽量保证图层扁平，减少过渡层叠，越是具体的 CSS 选择器，执行速度越慢。
 
