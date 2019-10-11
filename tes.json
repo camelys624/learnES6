@@ -1,0 +1,164 @@
+{
+  "inbounds": [
+    {
+      "port": 20161,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "9f1feb34-73e7-4aad-8a8c-47866dcdb54a",
+            "alterId": 1
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    },
+    {
+      "port": 20163,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "f905bf3a-a076-48d2-9043-5e3ca1df5032",
+            "alterId": 2
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    },
+    {
+      "port": 20165,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "d7b749bd-dd81-47e8-8d8b-04b79984cd02",
+            "alterId": 3
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    },
+    {
+      "port": 20167,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "7acdb23b-1872-4bd4-ba2f-3f15adfc6038",
+            "alterId": 4
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    },
+    {
+      "port": 20169,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "0f322691-5664-49d0-8b15-56c2b6c3eb98",
+            "alterId": 5
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    },
+    {
+      "port": 40169,
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
+          {
+            "id": "ab1b2818-ccf1-4bf1-827b-80cd3a2a8fff",
+            "alterId": 6
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "mkcp",
+        "kcpSettings": {
+          "uplinkCapacity": 5,
+          "downlinkCapacity": 100,
+          "congestion": true,
+          "header": {
+            "type": "none"
+          }
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    },
+    {
+      "protocol": "blackhole",
+      "settings": {},
+      "tag": "blocked"
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "ip": [
+          "geoip:private"
+        ],
+        "outboundTag": "blocked"
+      }
+    ]
+  }
+}
