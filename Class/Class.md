@@ -400,7 +400,7 @@ Point.name  // "Point"
 
 `name`属性总是返回紧跟在`class`关键字后面的类名。
 
-###### (4) Generator 方法
+##### (4) Generator 方法
 
 如果某个方法之前加上星号 (`*`)，就表示该方法是一个 Generator 函数。
 
@@ -420,4 +420,154 @@ for (let x of new Foo('hello', 'world')) {
 }
 // hello
 // world
+```
+
+上面代码中，`Foo`类的`Symbol.iterator`方法前面有一个星号，表示该方法是一个 Generator 函数。`Symbol.iterator`方法返回一个`Foo`类的默认遍历器，`for...of`循环会自动调用这个遍历器。
+
+##### (5) this 的指向
+
+类的方法内部如果含有`this`，它默认指向**类的实例**。但是，必须非常小心，一旦单独使用该方法，很可能会报错。
+
+```js
+class Logger {
+  printName(name = 'there') {
+    this.print(`Hello ${name}`);
+  }
+
+  print(text) {
+    console.log(text)
+  }
+}
+
+const logger = new Logger();
+const { printName } = logger;
+printName()
+```
+
+上面代码中，`printName`方法中的`this`，默认指向`Logger`类的实例。但是，如果将这个方法提取出来单独使用，`this`会指向该方法运行时所在的环境 (由于 class 内部是严格模式，所以 this 实际指向的是`undefined`)，从而导致找不到`print`方法而报错。
+
+一个比较简单的解决方法是，在构造方法中绑定`this`，这样就不会找不到`print`方法了。
+
+```js
+class Logger {
+  constructor() {
+    this.printname = this.printName.bind(this);
+  }
+  // ...
+}
+```
+
+另一种解决方法是使用箭头函数。
+
+```js
+class Obj {
+  constructor() {
+    this.getThis = () => this;
+  }
+}
+const myObj = new Obj();
+myObj.getThis() === myObj // true
+```
+
+箭头函数内部的`this`总是指向定义时所在的对象。上面代码中，箭头函数位于构造函数内部，它的定义生效的时候，实在构造函数执行的时候。这时，箭头函数所在的运行环境，肯定时实例对象，所以`this`会总是指向实例对象。
+
+还有一种解决方法是使用`Proxy`，获取方法的时候，自动绑定`this`。
+
+```js
+function selfish(target) {
+  const cache = new WeekMap();
+  const handler = {
+    get (target, key) {
+      const value = Reflect.get(target, key);
+      if(typeof value !== 'function') {
+        return value;
+      }
+      if (!cache.has(value)) {
+        cache.set(value, value.bind(target));
+      }
+      return cache.get(value);
+    }
+  };
+  const proxy = new Proxy(target, handler);
+  return proxy;
+}
+
+const logger = selfish(new Logger());
+```
+
+### 2.静态方法
+
+类相当于实例的原型，所有在类中定义的方法们都会被实例继承。如果在一个方法前，加上`static`关键字，就表示该方法不会被实例继承，而是直接通过类来调用，这就称为“静态方法”。
+
+```js
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+Foo.classMethod() // 'hello'
+
+var foo = new Foo();
+foo.classMethod()
+// TypeError: foo.classMethod is not a function
+```
+
+上面代码中，`Foo`类的`classMethod`方法前有`static`关键字，表明该方法是一个静态方法，可以直接在`Foo`类上调用 (`Foo.classMethod()`)，而不是在`Foo`类的实例上调用。如果在实例上调用静态方法，会抛出一个错误，表示不存在该方法。
+
+注意，如果静态方法包含`this`关键字，这个`this`指的是***类**，而不是实例。
+
+```js
+class Foo {
+  static bar() {
+    this.baz();
+  }
+  static baz() {
+    console.log('hello');
+  }
+  baz() {
+    console.log('world')
+  }
+}
+
+Foo.bar() // hello
+```
+
+上面代码中，静态方法`bar`调用了`this.baz`，这里的`this`指的是`Foo`类，而不是`Foo`的实例，等同于调用`Foo.baz`。另外，从这个例子还可以看出，静态方法可以与非静态方法重名。
+
+父类的静态方法，可以被子类继承。
+
+静态方法也是可以从`super`对对象上调用的。
+
+```js
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo { 
+}
+
+Bar.classMethod() // "hello"
+```
+
+上面代码中，弗雷`Foo`有一个静态方法，子类`Bar`可以调用这个方法。
+
+静态方法也是可以从`super`对象上调用的。
+
+```js
+class Foo {
+  static classMethod() {
+    return 'hello';
+  }
+}
+
+class Bar extends Foo {
+  static classMethod() {
+    return super.classMethod() + ', foo';
+  }
+}
+
+Bar.classMethod() // 'hello, too'
 ```
