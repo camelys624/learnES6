@@ -2,13 +2,35 @@
 
 ## 基本信息
 
-![头像](./static/head.jpg)
-
-> **杨升**         男      23岁   重庆市潼南县
-
-| TEL: | 15922835412  |  Email: | camel_yangz@163.com |
-| ----- | ----- | ----- | ----- |
-| GitHub: | [https://github.com/camelys624](https://github.com/camelys624) | twitter: | [CJam624](https://twitter.com/CJam624) |
+<div style="position: relative;">
+    <img src="./static/head.jpg" alt="head" style="position: absolute;width: 144px;"/>
+    <div style="margin-left: 154px;">
+        <div>
+            <strong>杨升</strong>
+            <span>&nbsp&nbsp 男 &nbsp&nbsp 24岁 &nbsp&nbsp 重庆市潼南县</span>
+        </div>
+        <div>
+            <div style="width: 50%;display: inline-block;">
+            <strong>TEL:</strong>
+            <span>&nbsp&nbsp 15922835412</span>
+            </div>
+            <div style="width: 50%;display: inline-block;">
+            <strong>Email:</strong>
+            <span>&nbsp&nbspcamel_yangz@163.com</span>
+            </div>
+        </div>
+        <div>
+            <div style="width: 50%;display: inline-block;">
+            <strong>GitHub:</strong>
+            <span>&nbsp&nbsp <a href="https://github.com/camelys624">https://github.com/camelys624</a></span>
+            </div>
+            <div style="width: 50%;display: inline-block;">
+            <strong>Twitter:</strong>
+            <span>&nbsp&nbsp <a href="https://twitter.com/CJam624">CJam624</span>
+            </div>
+        </div>
+    </div>
+</div>
 
 ## 教育经历
 
