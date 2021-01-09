@@ -10,7 +10,7 @@
             <span>&nbsp&nbsp 男 &nbsp&nbsp 24岁 &nbsp&nbsp 重庆市潼南县</span>
         </div>
         <div>
-            <div style="width: 50%;display: inline-block;">
+            <div style="width: 50%;display: inline-block;color: red">
             <strong>TEL:</strong>
             <span>&nbsp&nbsp 15922835412</span>
             </div>
