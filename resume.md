@@ -2,31 +2,31 @@
 
 ## 基本信息
 
-<div style="position: relative;">
-    <img src="./static/head.jpg" alt="head" style="position: absolute;width: 144px;"/>
-    <div style="margin-left: 154px;">
-        <div>
-            <strong>杨升</strong>
-            <span>&nbsp&nbsp 男 &nbsp&nbsp 24岁 &nbsp&nbsp 重庆市潼南县</span>
+<div style="position: relative; height: 194px;">
+    <img src="./static/head.jpg" alt="head" style="position: absolute;width: 144px;">
+    <div style="margin-left: 164px;">
+        <div style="margin-bottom: 20px; height: 40px; border-bottom: solid 1px lightgrey">
+            <strong>&#x6768;&#x5347;</strong>
+            <span>&#xA0;&#xA0; &#x7537; &#xA0;&#xA0; 24&#x5C81; &#xA0;&#xA0; &#x91CD;&#x5E86;&#x5E02;&#x6F7C;&#x5357;&#x53BF;</span>
         </div>
-        <div>
-            <div style="width: 50%;display: inline-block;color: red">
+        <div style="margin-bottom: 20px;">
+            <div style="width: 49%;display: inline-block;">
             <strong>TEL:</strong>
-            <span>&nbsp&nbsp 15922835412</span>
+            <div>15922835412</div>
             </div>
-            <div style="width: 50%;display: inline-block;">
+            <div style="width: 49%;display: inline-block;">
             <strong>Email:</strong>
-            <span>&nbsp&nbspcamel_yangz@163.com</span>
+            <div>camel_yangz@163.com</div>
             </div>
         </div>
-        <div>
-            <div style="width: 50%;display: inline-block;">
+        <div style="margin-bottom: 20px;">
+            <div style="width: 49%;display: inline-block;">
             <strong>GitHub:</strong>
-            <span>&nbsp&nbsp <a href="https://github.com/camelys624">https://github.com/camelys624</a></span>
+            <div><a href="https://github.com/camelys624">https://github.com/camelys624</a></div>
             </div>
-            <div style="width: 50%;display: inline-block;">
+            <div style="width: 49%;display: inline-block;">
             <strong>Twitter:</strong>
-            <span>&nbsp&nbsp <a href="https://twitter.com/CJam624">CJam624</span>
+            <div><a href="https://twitter.com/CJam624">CJam624</a></div>
             </div>
         </div>
     </div>
@@ -41,13 +41,27 @@
 - 熟练掌握 CSS3 新特性，包括 flex 与 grid 页面布局，animation 动画，filter 过滤器等。
 - 深入理解 JS 的原型与原型链，执行上下文，作用域链等基础知识。熟练掌握 ES6 的解构赋值，Promise 对象, sync 函数等知识。
 - 熟悉 web 语义化以及 HTML5 的新特性，熟悉 HTTP 协议以及计算机网络体系结构，了解计算机网络原理。
-- 熟练掌握 Vue.js 框架的组件式编程、子父组件通信，掌握 vuex 状态管理插件，熟悉 react 前端框架以及基于它的 react native 框架，掌握 webpack 打包工具，了解 D3.js 图表框架。
+- 熟练掌握 Vue.js 框架的组件式编程、子父组件通信，掌握 vuex 状态管理插件，熟悉 react 与 Angular 前端框架，掌握 webpack 打包工具，了解 D3.js 图表框架。
 - 熟悉 Linux(Ubuntu) 操作系统，会基本的命令行操作。
-- 熟练使用 Photoshop、AE 等图形设计软件，能剪辑视频，做动画，页面排版等操作。
+- 熟练使用 Photoshop、AE 等图形设计软件，能剪辑视频，一些简单的设计排版。
 
 ## 工作经历
 
-### 中再云图(重庆)科技有限公司    2019.03-至今
+### 博彦信息技术（上海）有限公司  2019.11至今
+
+web 前端开发工程师
+
+#### 工作内容
+
+1. 主要负责TMS项目前端开发，与台湾方面对接需求并实现。
+2. 协助Nova项目前端开发，负责了其中一些模块。
+3. 帮助其它项目前端开发，分担压力。
+
+#### 工作业绩
+
+在Pegasus项目组缺人手时，因为该项目与团队主流项目框架不一致，及时掌握了解，保证项目进度正常。
+
+### 中再云图(重庆)科技有限公司    2019.03-2019.11
 
 web 前端开发工程师 开发部
 
@@ -100,7 +114,17 @@ web 前端开发工程师 研发部
 
 ## 项目经历
 
-### 中山市固体废物在线监管平台  2019.06-至今
+### TMS管理系统 2019.11-至今
+
+**项目描述：** 本项目是基于Nova项目，针对台湾团队专门定制。该项目除了基本的权限管理模块之外，还有惠普测试案例与库存管理两个模块。在测试案例模块中，由惠普的developer创建好case与plan，测试部门创建并执行task；物料管理模块主要是针对测试部门的测试机器借出、转移和归还进行管理。
+
+**个人职责：** 负责本项目前端工作与一些页面的UI设计。除了负责此项目外，积极配合团队其它项目开发，保证各项目进度正常。
+
+**收获：** 在此项目中学到了CSS的粘性定位，使用express搭建静态文件服务器，VUE的项目全局环境变量设置等知识。
+
+**相关技术：** VUE、HTML、CSS3、ES6、NodeJS
+
+### 中山市固体废物在线监管平台  2019.06-2019.11
 
 **项目描述：** 本项目是为中山市政府做的一个对危险废物进行监管的平台，该平台使用大数据、物联网与地理信息等相关技术实现对危险废物的产生->运输->填埋全程监管。
 
